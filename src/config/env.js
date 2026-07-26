@@ -12,7 +12,7 @@ module.exports = {
   PORT: process.env.PORT || 3000,
 
   /** URL of the Stealth microservice used for Cloudflare bypass. */
-  STEALTH_API_URL: process.env.STEALTH_API_URL || 'http://localhost:8191',
+  STEALTH_API_URL: process.env.STEALTH_API_URL || 'https://kisutstealth.zeabur.app',
 
   /**
    * Per-category cache TTLs in hours.
