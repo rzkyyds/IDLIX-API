@@ -17,7 +17,8 @@ const errorHandler = require('./middleware/errorHandler');
 function createApp() {
   const app = express();
 
-  // ── API Documentation (Scalar) ──────────────────────────────────────────
+  // Trust the reverse proxy (Zeabur) — required for correct IP, protocol, etc.
+  app.set('trust proxy', 1);
   try {
     const swaggerDocument = require('../swagger_output.json');
     const { apiReference } = require('@scalar/express-api-reference');
