@@ -232,9 +232,8 @@ async function claimSession(gateToken, referer) {
 async function redeemClaim(redeemUrl, claim) {
   console.log(`[streamClient] Step 6: POST ${redeemUrl}`);
 
-  // getCookieHeader() is not needed here — majorplay.net doesn't use CF cookies.
-  // We just need the correct origin + referer headers.
-  const res = await fetch(redeemUrl, {
+  // Use browserFetch for TLS fingerprint — Node.js fetch gets .jpg segments instead of .ts
+  const res = await browserFetch(redeemUrl, {
     method:  'POST',
     headers: {
       'accept':             '*/*',
@@ -242,13 +241,6 @@ async function redeemClaim(redeemUrl, claim) {
       'content-type':       'text/plain',
       'origin':             BASE_URL,
       'referer':            `${BASE_URL}/`,
-      'sec-ch-ua':          '"Not/A)Brand";v="99", "Chromium";v="148"',
-      'sec-ch-ua-mobile':   '?1',
-      'sec-ch-ua-platform': '"Android"',
-      'sec-fetch-dest':     'empty',
-      'sec-fetch-mode':     'cors',
-      'sec-fetch-site':     'cross-site',
-      'user-agent':         UA,
     },
     body: JSON.stringify({ claim }),
   });
@@ -258,9 +250,9 @@ async function redeemClaim(redeemUrl, claim) {
     return null;
   }
 
-  const data = await res.json();
-  if (data.code !== 'ok') {
-    console.warn(`[streamClient] Step 6 unexpected code: ${data.code}`);
+  const data = parseJson(res);
+  if (!data || data.code !== 'ok') {
+    console.warn(`[streamClient] Step 6 unexpected code: ${data ? data.code : 'no data'}`);
     return null;
   }
 
